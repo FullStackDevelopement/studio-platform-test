@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { AudioPlayer } from "@/components/beats/audio-player";
 import type { Beat } from "@/types";
 
 interface BeatSwipeCardProps {
@@ -114,7 +115,7 @@ export function BeatSwipeCard({
         {/* Content */}
         <div className="relative z-[1] flex h-full flex-col justify-end p-6">
           {/* Waveform */}
-          <div className="flex flex-1 items-center justify-center gap-[3px] py-8">
+          <div className="flex min-h-0 flex-1 items-center justify-center gap-[3px] py-4">
             {WAVEFORM_BARS.map((h, i) => (
               <div
                 key={i}
@@ -128,6 +129,16 @@ export function BeatSwipeCard({
                 }}
               />
             ))}
+          </div>
+
+          <div
+            className="w-full min-w-0 shrink-0 px-0 pb-2"
+            onPointerDown={(e) => e.stopPropagation()}
+          >
+            <AudioPlayer
+              beatId={beat.id}
+              previewUrl={beat.audio_preview_url}
+            />
           </div>
 
           {/* Beat info */}
@@ -150,17 +161,6 @@ export function BeatSwipeCard({
               {beat.genre && <span className="pill">{beat.genre}</span>}
             </div>
           </div>
-        </div>
-
-        {/* Progress bar */}
-        <div
-          className="absolute bottom-0 left-0 right-0"
-          style={{ height: 3, background: "rgba(255,255,255,0.1)" }}
-        >
-          <div
-            className="h-full rounded-sm"
-            style={{ width: "65%", background: "var(--color-brand-gradient)" }}
-          />
         </div>
       </div>
     </div>

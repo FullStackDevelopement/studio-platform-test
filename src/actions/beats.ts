@@ -77,7 +77,10 @@ export async function purchaseBeat(
   }
 
   if (beat.is_exclusive_sold) {
-    return { success: false, error: "Ce beat a déjà été vendu en licence exclusive" };
+    return {
+      success: false,
+      error: "Ce beat a déjà été vendu en licence exclusive",
+    };
   }
 
   // Determine price
@@ -131,7 +134,9 @@ export async function purchaseBeat(
 
 export async function getPurchaseById(
   purchaseId: string,
-): Promise<ActionResponse<BeatPurchase & { beat_title: string; beat_slug: string }>> {
+): Promise<
+  ActionResponse<BeatPurchase & { beat_title: string; beat_slug: string }>
+> {
   const supabase = await createClient();
 
   const {
@@ -211,7 +216,10 @@ export async function getBeatDownloadUrl(
     .createSignedUrl(beat.audio_full_url, 900);
 
   if (error || !signedUrl) {
-    return { success: false, error: "Impossible de générer le lien de téléchargement" };
+    return {
+      success: false,
+      error: "Impossible de générer le lien de téléchargement",
+    };
   }
 
   return { success: true, data: { url: signedUrl.signedUrl } };
@@ -263,8 +271,10 @@ export async function createBeat(input: {
   } = await supabase.auth.getUser();
   if (!user) return { success: false, error: "Non connecté" };
 
-  if (!input.title.trim()) return { success: false, error: "Le titre est requis" };
-  if (input.priceSimple < 1) return { success: false, error: "Le prix simple doit être positif" };
+  if (!input.title.trim())
+    return { success: false, error: "Le titre est requis" };
+  if (input.priceSimple < 1)
+    return { success: false, error: "Le prix simple doit être positif" };
 
   const slug = slugify(input.title) + "-" + Date.now().toString(36);
 
@@ -286,16 +296,24 @@ export async function createBeat(input: {
     .select()
     .single<Beat>();
 
-  if (error || !data) return { success: false, error: error?.message ?? "Erreur" };
+  if (error || !data)
+    return { success: false, error: error?.message ?? "Erreur" };
   return { success: true, data };
 }
 
-const AUDIO_EXTENSIONS = [".wav", ".aiff", ".flac"];
+const AUDIO_EXTENSIONS = [".wav", ".aiff", ".flac", ".mp3"];
 const IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"];
 const MAX_AUDIO_SIZE = 200 * 1024 * 1024; // 200MB
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 
-const VALID_AUDIO_MIMES = ["audio/wav", "audio/x-wav", "audio/aiff", "audio/x-aiff", "audio/flac"];
+const VALID_AUDIO_MIMES = [
+  "audio/wav",
+  "audio/x-wav",
+  "audio/aiff",
+  "audio/x-aiff",
+  "audio/flac",
+  "audio/mpeg",
+];
 const VALID_IMAGE_MIMES = ["image/jpeg", "image/png", "image/webp"];
 
 function getExtension(filename: string): string {
@@ -322,7 +340,10 @@ export async function createBeatWithFiles(
     .single<{ role: string }>();
 
   if (!profile || !["beatmaker", "engineer", "admin"].includes(profile.role)) {
-    return { success: false, error: "Rôle non autorisé pour uploader des beats" };
+    return {
+      success: false,
+      error: "Rôle non autorisé pour uploader des beats",
+    };
   }
 
   // Extract files and metadata
@@ -331,27 +352,45 @@ export async function createBeatWithFiles(
   const metadataRaw = formData.get("metadata") as string | null;
 
   if (!audioFile || !coverFile || !metadataRaw) {
-    return { success: false, error: "Fichiers audio, image et métadonnées requis" };
+    return {
+      success: false,
+      error: "Fichiers audio, image et métadonnées requis",
+    };
   }
 
   // Validate files (extension + MIME type)
   const audioExt = getExtension(audioFile.name);
   if (!audioExt || !AUDIO_EXTENSIONS.includes(audioExt)) {
-    return { success: false, error: `Format audio non supporté : ${audioExt || "inconnu"}` };
+    return {
+      success: false,
+      error: `Format audio non supporté : ${audioExt || "inconnu"}`,
+    };
   }
   if (!VALID_AUDIO_MIMES.includes(audioFile.type)) {
-    return { success: false, error: `Type MIME audio non supporté : ${audioFile.type}` };
+    return {
+      success: false,
+      error: `Type MIME audio non supporté : ${audioFile.type}`,
+    };
   }
   if (audioFile.size > MAX_AUDIO_SIZE) {
-    return { success: false, error: "Fichier audio trop volumineux (max 200 Mo)" };
+    return {
+      success: false,
+      error: "Fichier audio trop volumineux (max 200 Mo)",
+    };
   }
 
   const coverExt = getExtension(coverFile.name);
   if (!coverExt || !IMAGE_EXTENSIONS.includes(coverExt)) {
-    return { success: false, error: `Format image non supporté : ${coverExt || "inconnu"}` };
+    return {
+      success: false,
+      error: `Format image non supporté : ${coverExt || "inconnu"}`,
+    };
   }
   if (!VALID_IMAGE_MIMES.includes(coverFile.type)) {
-    return { success: false, error: `Type MIME image non supporté : ${coverFile.type}` };
+    return {
+      success: false,
+      error: `Type MIME image non supporté : ${coverFile.type}`,
+    };
   }
   if (coverFile.size > MAX_IMAGE_SIZE) {
     return { success: false, error: "Image trop volumineuse (max 10 Mo)" };
@@ -373,8 +412,10 @@ export async function createBeatWithFiles(
     return { success: false, error: "Métadonnées invalides" };
   }
 
-  if (!metadata.title?.trim()) return { success: false, error: "Le titre est requis" };
-  if (metadata.priceSimple < 1) return { success: false, error: "Le prix simple doit être positif" };
+  if (!metadata.title?.trim())
+    return { success: false, error: "Le titre est requis" };
+  if (metadata.priceSimple < 1)
+    return { success: false, error: "Le prix simple doit être positif" };
 
   const slug = slugify(metadata.title) + "-" + Date.now().toString(36);
 
@@ -398,7 +439,10 @@ export async function createBeatWithFiles(
     .single<Beat>();
 
   if (insertError || !beat) {
-    return { success: false, error: insertError?.message ?? "Erreur création beat" };
+    return {
+      success: false,
+      error: insertError?.message ?? "Erreur création beat",
+    };
   }
 
   const basePath = `${user.id}/${beat.id}`;
@@ -415,7 +459,7 @@ export async function createBeatWithFiles(
     const audioPath = `${basePath}/audio${audioExt}`;
     const { error: audioErr } = await supabase.storage
       .from("beat-files")
-      .upload(audioPath, audioFile, { upsert: true });
+      .upload(audioPath, audioFile, { upsert: false });
     if (audioErr) throw new Error(`Audio upload: ${audioErr.message}`);
 
     // Step 4: Upload same audio to beat-previews (public preview)
@@ -454,13 +498,21 @@ export async function createBeatWithFiles(
     // Cleanup on failure: delete beat record and any uploaded files
     try {
       await supabase.from("beats").delete().eq("id", beat.id);
-      await supabase.storage.from("beat-previews").remove([
-        `${basePath}/cover${coverExt}`,
-        `${basePath}/preview${audioExt}`,
-      ]);
-      await supabase.storage.from("beat-files").remove([`${basePath}/audio${audioExt}`]);
+      await supabase.storage
+        .from("beat-previews")
+        .remove([
+          `${basePath}/cover${coverExt}`,
+          `${basePath}/preview${audioExt}`,
+        ]);
+      await supabase.storage
+        .from("beat-files")
+        .remove([`${basePath}/audio${audioExt}`]);
     } catch (cleanupErr) {
-      console.error("[createBeatWithFiles] Cleanup failed for beat", beat.id, cleanupErr);
+      console.error(
+        "[createBeatWithFiles] Cleanup failed for beat",
+        beat.id,
+        cleanupErr,
+      );
     }
 
     const message = err instanceof Error ? err.message : "Erreur upload";
@@ -493,8 +545,10 @@ export async function updateBeat(
   if (input.key !== undefined) updateData.key = input.key;
   if (input.genre !== undefined) updateData.genre = input.genre;
   if (input.tags !== undefined) updateData.tags = input.tags;
-  if (input.priceSimple !== undefined) updateData.price_simple = input.priceSimple;
-  if (input.priceExclusive !== undefined) updateData.price_exclusive = input.priceExclusive;
+  if (input.priceSimple !== undefined)
+    updateData.price_simple = input.priceSimple;
+  if (input.priceExclusive !== undefined)
+    updateData.price_exclusive = input.priceExclusive;
 
   const { data, error } = await supabase
     .from("beats")
@@ -504,7 +558,8 @@ export async function updateBeat(
     .select()
     .single<Beat>();
 
-  if (error || !data) return { success: false, error: error?.message ?? "Erreur" };
+  if (error || !data)
+    return { success: false, error: error?.message ?? "Erreur" };
   return { success: true, data };
 }
 
@@ -547,7 +602,9 @@ export interface BeatmakerSalesData {
   recentSales: BeatSale[];
 }
 
-export async function getBeatmakerSales(): Promise<ActionResponse<BeatmakerSalesData>> {
+export async function getBeatmakerSales(): Promise<
+  ActionResponse<BeatmakerSalesData>
+> {
   const supabase = await createClient();
 
   const {
@@ -578,14 +635,16 @@ export async function getBeatmakerSales(): Promise<ActionResponse<BeatmakerSales
     .select("id, beat_id, license_type, price_paid, created_at, user_id")
     .in("beat_id", beatIds)
     .order("created_at", { ascending: false })
-    .returns<{
-      id: string;
-      beat_id: string;
-      license_type: LicenseType;
-      price_paid: number;
-      created_at: string;
-      user_id: string;
-    }[]>();
+    .returns<
+      {
+        id: string;
+        beat_id: string;
+        license_type: LicenseType;
+        price_paid: number;
+        created_at: string;
+        user_id: string;
+      }[]
+    >();
 
   const sales = purchases ?? [];
 
@@ -618,5 +677,8 @@ export async function getBeatmakerSales(): Promise<ActionResponse<BeatmakerSales
     buyer_name: `Client ${s.user_id.slice(0, 4)}***`,
   }));
 
-  return { success: true, data: { totalSold, totalRevenue, salesByBeat, recentSales } };
+  return {
+    success: true,
+    data: { totalSold, totalRevenue, salesByBeat, recentSales },
+  };
 }

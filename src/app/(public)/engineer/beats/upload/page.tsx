@@ -9,13 +9,44 @@ import { BeatFileUploader } from "@/components/beats/beat-file-uploader";
 import { toast } from "@/components/ui/toaster";
 
 const GENRES = [
-  "Trap", "Drill", "Afro", "R&B", "Pop", "Lo-fi",
-  "Boom Bap", "Cloud", "Dancehall", "Reggaeton", "Autre",
+  "Trap",
+  "Drill",
+  "Afro",
+  "R&B",
+  "Pop",
+  "Lo-fi",
+  "Boom Bap",
+  "Cloud",
+  "Dancehall",
+  "Reggaeton",
+  "Autre",
 ];
 
 const KEYS = [
-  "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B",
-  "Cm", "C#m", "Dm", "D#m", "Em", "Fm", "F#m", "Gm", "G#m", "Am", "A#m", "Bm",
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "A",
+  "A#",
+  "B",
+  "Cm",
+  "C#m",
+  "Dm",
+  "D#m",
+  "Em",
+  "Fm",
+  "F#m",
+  "Gm",
+  "G#m",
+  "Am",
+  "A#m",
+  "Bm",
 ];
 
 export default function BeatUploadPage() {
@@ -120,12 +151,14 @@ export default function BeatUploadPage() {
         {/* Audio file */}
         <BeatFileUploader
           label="Fichier audio (WAV) *"
-          accept=".wav,.aiff,.flac"
+          accept=".wav,.aiff,.flac,.mp3"
           maxSizeMb={200}
           file={audioFile}
           onFileChange={setAudioFile}
         />
-        {errors.audio && <p className="-mt-3 text-sm text-error">{errors.audio}</p>}
+        {errors.audio && (
+          <p className="-mt-3 text-sm text-error">{errors.audio}</p>
+        )}
 
         {/* Cover image */}
         <BeatFileUploader
@@ -135,7 +168,9 @@ export default function BeatUploadPage() {
           file={coverFile}
           onFileChange={setCoverFile}
         />
-        {errors.cover && <p className="-mt-3 text-sm text-error">{errors.cover}</p>}
+        {errors.cover && (
+          <p className="-mt-3 text-sm text-error">{errors.cover}</p>
+        )}
 
         {/* BPM + Key */}
         <div className="grid grid-cols-2 gap-4">
@@ -236,9 +271,7 @@ export default function BeatUploadPage() {
               type="number"
               min={0}
               value={priceExclusive}
-              onChange={(e) =>
-                setPriceExclusive(parseInt(e.target.value) || 0)
-              }
+              onChange={(e) => setPriceExclusive(parseInt(e.target.value) || 0)}
               className="w-full rounded-lg border border-border-subtle bg-bg-elevated px-4 py-2.5 text-sm text-text-primary transition-colors focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
             />
             <p className="mt-1 text-xs text-text-muted">
